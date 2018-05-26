@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace TeleprompterConsole
 {
@@ -12,6 +13,11 @@ namespace TeleprompterConsole
             foreach (var line in lines)
             {
                 Console.WriteLine(line);
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    var pause = Task.Delay(200);
+                    pause.Wait();
+                }
             }
         }
 
@@ -20,10 +26,10 @@ namespace TeleprompterConsole
             string line;
             using (var reader = File.OpenText(file))
             {
-                while((line = reader.ReadLine()) != null)
+                while ((line = reader.ReadLine()) != null)
                 {
                     var words = line.Split(' ');
-                    foreach(var word in words)
+                    foreach (var word in words)
                     {
                         yield return word + " ";
                     }

@@ -24,7 +24,12 @@ namespace TeleprompterConsole
             {
                 while((line = reader.ReadLine()) != null)
                 {
-                    yield return line;
+                    var words = line.Split(' ');
+                    foreach(var word in words)
+                    {
+                        yield return word + " ";
+                    }
+                    yield return Environment.NewLine;
                 }
             }
         }

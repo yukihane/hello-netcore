@@ -8,8 +8,6 @@ namespace TeleprompterConsole
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-
             var lines = ReadFrom("sampleQuotes.txt");
             foreach (var line in lines)
             {

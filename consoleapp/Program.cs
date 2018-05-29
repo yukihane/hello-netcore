@@ -12,7 +12,7 @@ namespace TeleprompterConsole
             var lines = ReadFrom("sampleQuotes.txt");
             foreach (var line in lines)
             {
-                Console.WriteLine(line);
+                Console.Write(line);
                 if (!string.IsNullOrWhiteSpace(line))
                 {
                     var pause = Task.Delay(200);

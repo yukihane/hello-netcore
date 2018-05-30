@@ -2,23 +2,72 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using static System.Math;
 
 namespace TeleprompterConsole
 {
+    internal class TelePrompterConfig
+    {
+        private object lockHandle = new object();
+        public int DelayInMilliseconds { get; private set; } = 200;
+
+        public void UpdateDelay(int increment) // negative to speed up
+        {
+            var newDelay = Min(DelayInMilliseconds + increment, 1000);
+            newDelay = Max(newDelay, 20);
+            lock (lockHandle)
+            {
+                DelayInMilliseconds = newDelay;
+            }
+        }
+
+        public bool Done { get; private set; }
+
+        public void SetDone()
+        {
+            Done = true;
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
         {
-            var lines = ReadFrom("sampleQuotes.txt");
-            foreach (var line in lines)
+            ShowTeleprompter().Wait();
+        }
+
+        private static async Task ShowTeleprompter()
+        {
+            var words = ReadFrom("sampleQuotes.txt");
+            foreach (var word in words)
             {
-                Console.Write(line);
-                if (!string.IsNullOrWhiteSpace(line))
+                Console.Write(word);
+                if (!string.IsNullOrWhiteSpace(word))
                 {
-                    var pause = Task.Delay(200);
-                    pause.Wait();
+                    await Task.Delay(200);
                 }
             }
+        }
+
+        private static async Task GetInput()
+        {
+            var delay = 200;
+            Action work = () =>
+            {
+                do
+                {
+                    var key = Console.ReadKey(true);
+                    if (key.KeyChar == '>')
+                    {
+                        delay -= 10;
+                    }
+                    else if (key.KeyChar == '<')
+                    {
+                        delay += 10;
+                    }
+                } while (true);
+            };
+            await Task.Run(work);
         }
 
         static IEnumerable<string> ReadFrom(string file)
